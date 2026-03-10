@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Currency Converter</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-converter">
+
+  <!-- Navbar -->
+<nav class="navbar navbar-expand-lg custom-navbar py-2">
+  <div class="container-fluid">
+    <a class="navbar-brand d-flex align-items-center gap-2" href="/">
+      <img src="{{ url_for('static', filename='images/logo.png') }}" alt="W Logo" style="height: 34px;">
+      <span class="fw-bold wind-logo-text">WIND</span>
+    </a>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto nav-glow">
+        <li class="nav-item">
+          <a class="nav-link {% if request.path == '/' %}active{% endif %}" href="/">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if request.path == '/converter' %}active{% endif %}" href="/converter">Currency Converter</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+
+
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="/">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" href="/converter">Currency Converter</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Currency Form -->
+  <div class="container mt-5">
+    <h2 class="text-center mb-4">💱 Currency Converter</h2>
+    <form method="POST" class="row g-3 justify-content-center">
+      <div class="col-md-3">
+        <select name="from_currency" class="form-select" required>
+          <option value="" disabled {% if not from_currency %}selected{% endif %}>Select From Currency</option>
+          {% for code, label in currencies.items() %}
+            <option value="{{ code }}" {% if from_currency == code %}selected{% endif %}>{{ code }} - {{ label }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="col-md-3">
+        <select name="to_currency" class="form-select" required>
+          <option value="" disabled {% if not to_currency %}selected{% endif %}>Select To Currency</option>
+          {% for code, label in currencies.items() %}
+            <option value="{{ code }}" {% if to_currency == code %}selected{% endif %}>{{ code }} - {{ label }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="col-md-3">
+        <input type="number" class="form-control" name="amount" placeholder="Amount" step="0.01" required value="{{ amount|default('') }}">
+      </div>
+
+      <div class="col-md-2 d-grid">
+        <button type="submit" class="btn btn-primary">Convert</button>
+      </div>
+    </form>
+
+    {% if result %}
+      <div class="alert alert-info mt-4 text-center">
+        Converted Amount: <strong>{{ symbol }} {{ result }}</strong>
+      </div>
+
+      <div class="text-center mt-2">
+        <a href="/converter" class="btn btn-secondary">Reset</a>
+      </div>
+
+<div class="chart-box p-4 mt-5">
+  <h5 class="text-center text-light">📉 7-Day Exchange Rate Trend</h5>
+<canvas id="rateChart"></canvas>
+</div>
+
+
+
+
+      {% if chart_data %}
+        <script type="application/json" id="chart-data">
+          {{ chart_data | tojson }}
+        </script>
+      {% endif %}
+
+      <script src="{{ url_for('static', filename='js/chart.js') }}"></script>
+    {% endif %}
+  </div>
+
+</body>
+</html>

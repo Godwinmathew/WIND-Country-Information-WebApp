@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>{{ country.name.common if country else "WIND - Country Info" }}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="bg-country">
+
+<div class="container mt-4">
+  {% if error %}
+    <div class="alert alert-danger">{{ error }}</div>
+  {% else %}
+    <!-- Title -->
+    <h2 class="mb-4 text-center">🗺️ {{ country.name.common }} - Country Details</h2>
+
+    <!-- Flag Section -->
+    <div class="text-center mb-4">
+      <h4>Flag</h4>
+      <img src="{{ country.flags.png }}" alt="Flag of {{ country.name.common }}" class="img-fluid rounded shadow">
+    </div>
+
+    <!-- Country Info (4x2 Grid) -->
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4 mb-4">
+      <div class="col"><div class="info-box p-3 bg-light rounded shadow-sm"><strong>Capital:</strong><br> {{ country.capital[0] }}</div></div>
+      <div class="col"><div class="info-box p-3 bg-light rounded shadow-sm"><strong>Region:</strong><br> {{ country.region }}</div></div>
+      <div class="col"><div class="info-box p-3 bg-light rounded shadow-sm"><strong>Subregion:</strong><br> {{ country.subregion }}</div></div>
+      <div class="col"><div class="info-box p-3 bg-light rounded shadow-sm"><strong>Population:</strong><br> {{ country.population | comma }}</div></div>
+      <div class="col"><div class="info-box p-3 bg-light rounded shadow-sm"><strong>Area:</strong><br> {{ country.area }} km²</div></div>
+      <div class="col"><div class="info-box p-3 bg-light rounded shadow-sm"><strong>Languages:</strong><br> {{ country.languages | join_filter }}</div></div>
+      <div class="col"><div class="info-box p-3 bg-light rounded shadow-sm"><strong>Currencies:</strong><br> {{ country.currencies | join_filter }}</div></div>
+      <div class="col"><div class="info-box p-3 bg-light rounded shadow-sm"><strong>Timezones:</strong><br> {{ country.timezones | join_filter }}</div></div>
+    </div>
+
+<!-- Weather Section (Using local icons) -->
+{% if weather %}
+  <div class="card mb-4 weather-card text-center">
+    <div class="card-header bg-info text-white fw-semibold">
+      🌦️ Weather in {{ country.capital[0] }}
+    </div>
+    <div class="card-body">
+      <img src="{{ url_for('static', filename='images/weather_icons/' ~ weather.weather[0].icon ~ '.png') }}"
+           alt="Weather Icon"
+           class="weather-icon mb-3" />
+
+      <p class="mb-1"><strong>Temperature:</strong> {{ weather.main.temp }}°C</p>
+      <p class="mb-1"><strong>Condition:</strong> {{ weather.weather[0].description.title() }}</p>
+      <p class="mb-1"><strong>Humidity:</strong> {{ weather.main.humidity }}%</p>
+      <p class="mb-0"><strong>Wind Speed:</strong> {{ weather.wind.speed }} m/s</p>
+    </div>
+  </div>
+{% endif %}
+
+
+
+    <!-- Map Section Wrapped in Card -->
+    <div class="map-container mb-5">
+      <div class="card shadow-lg map-card">
+        <div class="card-header text-white bg-dark text-center fw-semibold">
+          🗌 Map View of {{ country.name.common }}
+        </div>
+        <div class="card-body p-0">
+          <iframe
+            src="https://maps.google.com/maps?q={{ latitude }},{{ longitude }}&z=5&output=embed"
+            width="100%" height="400" style="border:0; border-radius: 0 0 12px 12px;" allowfullscreen loading="lazy">
+          </iframe>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+</div>
+
+</body>
+</html>
